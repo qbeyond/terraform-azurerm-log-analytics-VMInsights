@@ -1,0 +1,104 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workspaceName": {
+            "type": "String",
+            "metadata": {
+                "description": "Name of the workspace."
+            }
+        },
+        "location": {
+            "type": "String",
+            "metadata": {
+                "description": "Specifies the location in which to create the workspace."
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2020-03-01-preview",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "name": "[parameters('workspaceName')]",
+            "location": "[parameters('location')]",
+            "resources": [
+                {
+                    "apiVersion": "2020-03-01-preview",
+                    "type": "datasources",
+                    "name": "VMInsights-Logical-Disk-Linux",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "objectName": "Logical Disk",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "performanceCounters": [
+                            { "counterName": "% Used Space" },
+                            { "counterName": "Disk Read Bytes/sec" },
+                            { "counterName": "Disk Reads/sec" },
+                            { "counterName": "Disk Transfers/sec" },
+                            { "counterName": "Disk Write Bytes/sec" },
+                            { "counterName": "Disk Writes/sec" },
+                            { "counterName": "Free Megabytes" },
+                            { "counterName": "Logical Disk Bytes/sec" }
+                        ]
+                    }
+                },
+                {
+                    "apiVersion": "2020-03-01-preview",
+                    "type": "datasources",
+                    "name": "VMInsights-Memory-Linux",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "objectName": "Memory",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "performanceCounters": [
+                            { "counterName": "Available MBytes Memory" }
+                        ]
+                    }
+                },
+                {
+                    "apiVersion": "2020-03-01-preview",
+                    "type": "datasources",
+                    "name": "VMInsights-Network",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "objectName": "Network",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "performanceCounters": [
+                            { "counterName": "Total Bytes Received" },
+                            { "counterName": "Total Bytes Transmitted" }
+                        ]
+                    }
+                },
+                {
+                    "apiVersion": "2020-03-01-preview",
+                    "type": "datasources",
+                    "name": "VMInsights-Processor-Pct-Processor-Time-Linux",
+                    "dependsOn": [
+                        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
+                    ],
+                    "kind": "LinuxPerformanceObject",
+                    "properties": {
+                        "objectName": "Processor",
+                        "instanceName": "*",
+                        "intervalSeconds": 60,
+                        "performanceCounters": [
+                            { "counterName": "% Processor Time" }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
